@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 750" width="1500" height="750" font-family="ui-monospace, 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b0d12"/>
+      <stop offset="100%" stop-color="#15171f"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="50%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0d12" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#0b0d12" stop-opacity="0.9"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1f2330" stroke-width="1"/>
+    </pattern>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1500" height="750" fill="url(#bg)"/>
+  <rect width="1500" height="750" fill="url(#grid)"/>
+  <rect width="1500" height="750" fill="url(#fade)"/>
+
+  <!-- Top eyebrow / kicker -->
+  <g transform="translate(80, 90)">
+    <rect x="0" y="0" width="14" height="14" fill="url(#accent)"/>
+    <text x="28" y="12" fill="#9ca3af" font-size="18" letter-spacing="3" font-weight="500">SELF-LEARNING AGENTS // MEDIUM</text>
+  </g>
+
+  <!-- Main title -->
+  <g transform="translate(80, 200)">
+    <text fill="#f5f7fa" font-size="92" font-weight="700" letter-spacing="-2">
+      <tspan x="0" dy="0">Make your coding agent</tspan>
+      <tspan x="0" dy="110">self-learn.</tspan>
+    </text>
+  </g>
+
+  <!-- Underline accent under "self-learn." -->
+  <rect x="80" y="436" width="540" height="6" fill="url(#accent)" filter="url(#glow)"/>
+
+  <!-- Subtitle -->
+  <text x="80" y="500" fill="#cbd5e1" font-size="28" font-weight="400" letter-spacing="0.5">
+    Stop teaching the same lesson twice.
+  </text>
+
+  <!-- Three-layer model badges, bottom-left -->
+  <g transform="translate(80, 600)" font-size="20" font-weight="600" letter-spacing="1">
+    <g>
+      <rect x="0" y="0" width="170" height="50" rx="6" fill="#1f2937" stroke="#7c3aed" stroke-width="1.5"/>
+      <text x="22" y="32" fill="#c4b5fd">PERSONA</text>
+    </g>
+    <g transform="translate(190, 0)">
+      <rect x="0" y="0" width="170" height="50" rx="6" fill="#1f2937" stroke="#22d3ee" stroke-width="1.5"/>
+      <text x="28" y="32" fill="#a5f3fc">MEMORY</text>
+    </g>
+    <g transform="translate(380, 0)">
+      <rect x="0" y="0" width="170" height="50" rx="6" fill="#1f2937" stroke="#10b981" stroke-width="1.5"/>
+      <text x="42" y="32" fill="#a7f3d0">SKILLS</text>
+    </g>
+  </g>
+
+  <!-- Right side: terminal mock -->
+  <g transform="translate(880, 180)">
+    <rect x="0" y="0" width="540" height="380" rx="14" fill="#0e1117" stroke="#2d3340" stroke-width="1.5"/>
+    <!-- terminal chrome -->
+    <circle cx="24" cy="24" r="6" fill="#ef4444"/>
+    <circle cx="46" cy="24" r="6" fill="#f59e0b"/>
+    <circle cx="68" cy="24" r="6" fill="#10b981"/>
+    <text x="270" y="29" fill="#6b7280" font-size="14" text-anchor="middle">~/your-repo</text>
+
+    <!-- terminal lines -->
+    <g font-size="18" font-weight="500">
+      <text x="28" y="80"  fill="#10b981">$</text>
+      <text x="52" y="80"  fill="#e5e7eb">curl -fsSL .../install.sh | bash</text>
+
+      <text x="28" y="120" fill="#6b7280">›</text>
+      <text x="52" y="120" fill="#cbd5e1">Which coding agent?</text>
+      <text x="72" y="148" fill="#7c3aed">1) Claude Code</text>
+      <text x="72" y="172" fill="#7c3aed">2) Codex CLI</text>
+      <text x="72" y="196" fill="#7c3aed">3) Cursor</text>
+      <text x="72" y="220" fill="#7c3aed">4) Aider</text>
+
+      <text x="28" y="260" fill="#6b7280">›</text>
+      <text x="52" y="260" fill="#cbd5e1">Install scope?</text>
+      <text x="72" y="288" fill="#22d3ee">1) this project (cwd)</text>
+      <text x="72" y="312" fill="#22d3ee">2) global</text>
+
+      <text x="28" y="350" fill="#10b981">✓</text>
+      <text x="52" y="350" fill="#a7f3d0">self-learning agent installed.</text>
+    </g>
+  </g>
+
+  <!-- Bottom-right byline -->
+  <text x="1420" y="690" fill="#6b7280" font-size="16" text-anchor="end">
+    inspired by Hermes  /  works with Claude Code, Codex, Cursor, Aider
+  </text>
+</svg>
