@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Read(./.claude/**)",
+      "Write(./.claude/memory/**)",
+      "Write(./.claude/skills/**)",
+      "Edit(./.claude/memory/**)",
+      "Edit(./.claude/SOUL.md)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session_start.py"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/capture_signal.py"
+          }
+        ]
+      }
+    ]
+  }
+}

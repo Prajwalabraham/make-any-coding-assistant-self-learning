@@ -1,0 +1,5 @@
+.claude/memory/.signal_counter.json
+.claude/memory/archive/
+__pycache__/
+*.pyc
+.DS_Store
