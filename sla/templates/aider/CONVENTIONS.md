@@ -59,6 +59,11 @@ Body: Overview / When to Use / Steps / Pitfalls / Checklist. Promote a
 memory to a skill when the same multi-step instruction has appeared in
 three or more sessions.
 
+Do not write SKILL.md files by hand. Anthropic's official `skill-creator`
+skill is vendored at `.aider/skills/skill-creator/` (Apache 2.0). When
+`skill-distiller` decides a workflow is ready for promotion, `/read` the
+skill-creator SKILL.md and use its methodology to draft the new skill.
+
 ## Maintenance
 
 A keeper prompt lives at `.aider/agents/memory-keeper.md`. Aider can

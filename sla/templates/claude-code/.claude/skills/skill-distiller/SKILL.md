@@ -1,7 +1,7 @@
 ---
 name: skill-distiller
-description: Use when the user has issued the same multi-step instruction three or more times across sessions. Distills the repeated workflow into a new SKILL.md so the agent stops needing to be re-taught.
-version: 1.0.0
+description: Use when the user has issued the same multi-step instruction three or more times across sessions, or when the `[self-learning]` signal hook reports a correction pattern that has fired 3+ times. Detects the moment, then delegates the actual skill authoring to the vendored `skill-creator` skill.
+version: 1.1.0
 author: self-learning-agent
 license: MIT
 ---
@@ -10,57 +10,63 @@ license: MIT
 
 ## Overview
 
-Memory captures *facts*. Skills capture *workflows*. When the user finds
-themselves typing the same multi-step recipe a third time — "first run
-the linter, then the type-checker, then commit with this format" — it's
-time to lift it out of conversation and into a reusable skill.
+This skill is a *trigger*, not an *author*. Detection and authoring are
+two different jobs; keeping them separate lets the self-learning loop
+own the "when to promote" decision while Anthropic's official
+[`skill-creator`](../skill-creator/SKILL.md) skill owns the "how to
+write a good SKILL.md, eval it, optimise its description" part.
+
+When you decide to promote a workflow, do not draft the new SKILL.md
+yourself. Invoke `skill-creator` and let it run its full authoring
+flow: draft, test prompts, evals, description optimisation.
 
 ## When to Use
 
-- The same instruction sequence has appeared in ≥3 separate turns
-- The user explicitly asks: *"can you remember how I like to do X?"*
+- A multi-step instruction has appeared in three separate sessions
+- The `capture_signal.py` hook has emitted "Pattern has repeated 3+
+  times" for a correction cue
+- The user explicitly asks "can you remember how I like to do X?"
 - You catch yourself re-deriving the same plan from memory snippets
-
-**Do not use for:** one-off tasks, anything covered by an existing skill
-(extend it instead), or workflows so trivial they fit in one memory line.
 
 ## Steps
 
-1. **Survey peers** in `.claude/skills/` — match tone and structure.
-2. **Pick a slug**: lowercase, hyphens, ≤ 64 chars, verb-led
-   (`deploy-staging`, `triage-flaky-test`).
-3. **Write** `.claude/skills/<slug>/SKILL.md` with this shape:
+1. **Confirm the trigger.** Three is the floor, not the ceiling. Two
+   occurrences is coincidence. If unsure, count back through memory
+   entries on the same topic.
+2. **Pick a slug and a target path.** Verb-led, lowercase, hyphens.
+   For Claude Code the path is `.claude/skills/<slug>/SKILL.md`.
+3. **Hand off to skill-creator.** State the intent in one paragraph
+   and invoke the [`skill-creator`](../skill-creator/SKILL.md) skill:
 
-   ```yaml
-   ---
-   name: <slug>
-   description: Use when <trigger>. <one-line behavior>.
-   version: 1.0.0
-   ---
-   ```
+   > Use the skill-creator skill to draft a new skill at
+   > `.claude/skills/<slug>/SKILL.md`. Trigger description: "Use when
+   > <one-line trigger>". Behaviour: <one-line summary>. Follow the
+   > full skill-creator flow including the description optimiser
+   > (`scripts/improve_description.py`) so the trigger matches reliably.
 
-   Body sections: **Overview → When to Use → Steps → Pitfalls → Verification Checklist.**
-4. **Cross-link** related skills and memories with plain markdown links.
-5. **Propose, don't impose** — show the draft to the user before committing.
-   Skills are durable; a bad skill silently warps every future session.
+4. **Show the draft to the user before committing.** Skill-creator's
+   default mode is conversational; let the user evaluate the draft and
+   any test prompts. Do not save until the user approves.
+5. **Prune.** Once the skill exists, remove the now-redundant feedback
+   memory entries that captured the workflow piecemeal, and delete
+   their lines from `MEMORY.md`.
 
 ## Pitfalls
 
-1. **Distilling too early.** Two occurrences is coincidence. Three is a
-   pattern. Wait for three.
-2. **Skill descriptions that don't start with "Use when…".** The
-   description is the trigger — write it so future-you can decide
-   relevance in one read.
-3. **One skill per micro-step.** Bundle the whole recipe. Ten tiny skills
-   that always fire together should be one skill.
-4. **Forgetting to delete the now-redundant memories.** Once a workflow
-   is a skill, the feedback memories that taught it are noise. Remove
-   them and their `MEMORY.md` entries.
+1. **Distilling on the second occurrence.** Wait for three.
+2. **Drafting the SKILL.md yourself instead of using skill-creator.**
+   You'll miss the description optimiser and the eval loop, both of
+   which materially improve trigger reliability. Use the tool that
+   exists.
+3. **One skill per micro-step.** Bundle related steps into one skill.
+4. **Forgetting to prune the now-redundant memories.** Duplicated
+   guidance in two places (memory and skill) drifts apart.
 
 ## Verification Checklist
 
-- [ ] Trigger appeared ≥ 3 times across sessions
-- [ ] No existing skill already covers it
-- [ ] Frontmatter starts at byte 0; `description` starts with "Use when"
-- [ ] Body has Overview, When to Use, Steps, Pitfalls, Checklist
-- [ ] Superseded memory entries have been pruned
+- [ ] Trigger appeared three or more times across sessions
+- [ ] No existing skill covers it
+- [ ] `skill-creator` was invoked for authoring, not bypassed
+- [ ] Description was run through `improve_description.py`
+- [ ] Draft was shown to the user before commit
+- [ ] Superseded memory entries pruned from `MEMORY.md`

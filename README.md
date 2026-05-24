@@ -174,6 +174,8 @@ The repo's `skill-distiller` skill encodes the promotion rule plainly:
 
 > Two occurrences is coincidence. Three is a pattern. Wait for three.
 
+**Authoring is delegated to Anthropic's official [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)** (Apache 2.0), vendored under each agent's skills directory. Detection and authoring are different jobs: the self-learning loop decides *when* to promote a workflow; skill-creator handles *how* to draft a good SKILL.md, run evaluations, and tune the description for reliable triggering. The wrapper skill (`skill-distiller`) is intentionally thin and hands off as soon as the three-repeat threshold trips. Cursor's template references the upstream methodology by URL instead of vendoring, since its rules use `.mdc` rather than `SKILL.md`.
+
 ---
 
 ## Factor 4. Make consideration mandatory, not optional

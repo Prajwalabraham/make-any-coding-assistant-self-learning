@@ -1,44 +1,49 @@
 ---
 name: skill-distiller
-description: Use when the user has issued the same multi-step instruction three or more times across sessions. Distills the repeated workflow into a new SKILL.md.
+description: Use when the user has issued the same multi-step instruction three or more times across sessions. Detects the moment and delegates the actual skill authoring to the vendored skill-creator skill.
 ---
 
 # Skill Distiller (Codex)
 
 ## Overview
 
-Memory captures facts. Skills capture workflows. When the user repeats
-a multi-step recipe a third time, lift it out of conversation and into
-a reusable skill at `.agents/skills/<name>/SKILL.md`.
+Detection and authoring are different jobs. This skill owns detection:
+"the user has now repeated this recipe three times, it's time to
+promote it to a skill." Authoring is delegated to the vendored
+[`skill-creator`](../skill-creator/SKILL.md) (Apache 2.0, from
+Anthropic Skills), which knows how to draft, eval, and tune the
+description for reliable triggering.
 
 ## When to Use
 
 - A multi-step instruction has appeared in three separate sessions
-- The user asks: "can you remember how I like to do X?"
+- The user explicitly asks "can you remember how I like to do X?"
 - You catch yourself re-deriving the same plan from memory snippets
 
 ## Steps
 
-1. Survey peer skills in `.agents/skills/`.
-2. Pick a verb-led slug, lowercase, hyphens.
-3. Write `.agents/skills/<slug>/SKILL.md` with the standard frontmatter
-   and the five sections: Overview, When to Use, Steps, Pitfalls,
-   Checklist.
-4. Cross-link related skills and memories with markdown links.
-5. Show the draft to the user before committing.
+1. Confirm three repeats. Two is coincidence.
+2. Pick a slug. Target path: `.agents/skills/<slug>/SKILL.md`.
+3. Hand off:
+
+   > Use the skill-creator skill to draft a new skill at
+   > `.agents/skills/<slug>/SKILL.md`. Trigger description: "Use when
+   > <one-line trigger>". Behaviour: <one-line summary>. Follow the
+   > full skill-creator flow including the description optimiser.
+
+4. Show the draft to the user before committing.
+5. Prune now-redundant feedback memories from `MEMORY.md`.
 
 ## Pitfalls
 
-1. Distilling on the second occurrence. Wait for three.
-2. Descriptions that don't start with "Use when...". The description is
-   the trigger.
-3. One skill per micro-step. Bundle related steps into one skill.
-4. Forgetting to delete the now-redundant memories.
+1. Distilling on the second occurrence.
+2. Drafting the SKILL.md yourself instead of using skill-creator.
+3. One skill per micro-step.
+4. Forgetting to prune.
 
 ## Checklist
 
-- [ ] Trigger appeared three or more times
-- [ ] No existing skill covers it
-- [ ] Frontmatter `description` starts with "Use when"
-- [ ] Body has all five sections
-- [ ] Superseded memory entries removed from MEMORY.md
+- [ ] Three or more repeats confirmed
+- [ ] `skill-creator` invoked, not bypassed
+- [ ] Draft approved by user
+- [ ] Superseded memories pruned

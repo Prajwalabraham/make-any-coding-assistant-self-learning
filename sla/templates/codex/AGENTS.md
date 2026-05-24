@@ -61,6 +61,11 @@ description: Use when <trigger>. <one-line behavior>.
 
 Body sections: Overview, When to Use, Steps, Pitfalls, Checklist.
 
+Do not write SKILL.md files by hand. Anthropic's official `skill-creator`
+skill is vendored at `.agents/skills/skill-creator/` (Apache 2.0). When
+`skill-distiller` decides a workflow is ready for promotion, it delegates
+to `skill-creator` for drafting, evaluation, and description optimisation.
+
 ## 4. Maintenance
 
 A `memory-keeper` prompt lives at `.agents/agents/memory-keeper.md`.

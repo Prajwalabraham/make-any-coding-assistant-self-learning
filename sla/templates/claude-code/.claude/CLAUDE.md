@@ -67,6 +67,12 @@ description: Use when <trigger>. <one-line behavior>.
 The body explains: **Overview → When to Use → Steps → Pitfalls → Checklist.**
 See `.claude/skills/auto-memory/SKILL.md` for the canonical shape.
 
+**Authoring new skills:** do not write SKILL.md files by hand. Anthropic's
+official [`skill-creator`](.claude/skills/skill-creator/SKILL.md) skill is
+vendored here (Apache 2.0). When the `skill-distiller` decides a workflow
+is ready for promotion, it delegates to `skill-creator` for drafting,
+evaluation, and description optimisation.
+
 ---
 
 ## The Learning Loop
