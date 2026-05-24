@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""SessionStart hook: surface the agent's memory + skill inventory.
+"""Bootstraps the agent's learned state into every new session.
 
-Reads .claude/SOUL.md, .claude/memory/MEMORY.md, and lists .claude/skills/*.
-Emits a single additionalContext block that Claude Code injects into the
-session prompt. No network, no side effects.
+Without this, the persona file, memory index, and skill inventory only
+get loaded if the model thinks to read them, which it usually doesn't.
+Injecting them as additionalContext makes the learning loop reliable
+instead of opportunistic.
 """
 from __future__ import annotations
 

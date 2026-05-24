@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Plug-and-play installer for macOS / Linux.
+# Kept as a one-shot copy (no symlink, no submodule) so each target
+# project owns its memory store and skills independently. Sharing the
+# same .claude/ across repos would cross-contaminate learned context.
 set -euo pipefail
 
 target="${1:-}"

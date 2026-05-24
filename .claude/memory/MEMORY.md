@@ -6,4 +6,6 @@ Format:
   - [Title](file.md) — one-line hook explaining what's inside
 -->
 
-<!-- no memories yet — agent will append here as it learns -->
+- [Git identity](user_git_identity.md) — personal repo commits must use Prajwal Abraham <prajwalabaraham.21@gmail.com>
+- [Writing style](feedback_writing_style.md) — code comments explain WHY not WHAT; prose avoids em dashes
+- [Relatable examples](feedback_relatable_examples.md) — use examples 80% of devs recognize, not personal-setup quirks

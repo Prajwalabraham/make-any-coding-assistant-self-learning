@@ -1,5 +1,6 @@
-# Plug-and-play installer for Windows / PowerShell.
-# Copies the .claude/ skeleton into a target project so the agent can start learning.
+# Kept as a one-shot copy (no symlink, no submodule) so each target
+# project owns its memory store and skills independently. Sharing the
+# same .claude/ across repos would cross-contaminate learned context.
 
 param(
     [Parameter(Mandatory = $true)]

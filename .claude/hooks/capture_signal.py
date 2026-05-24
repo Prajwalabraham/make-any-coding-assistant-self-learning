@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""UserPromptSubmit hook: lightweight signal detector.
+"""Forces the model to consider saving on every turn that looks like signal.
 
-Reads the incoming prompt from stdin (Claude Code passes the hook payload
-as JSON). If the prompt contains correction/confirmation/preference cues,
-it appends a nudge to additionalContext reminding the agent to invoke the
-`auto-memory` skill before responding.
+The model is perfectly capable of recognising corrections and preferences,
+but it forgets to act on that recognition roughly half the time when no
+external prompt asks the question. A cheap regex pass plus a one-line
+nudge in additionalContext closes that gap without taking the decision
+away from the model.
 
-This is deliberately heuristic — the *model* still decides what to save.
-The hook only ensures the model *considers* saving on every relevant turn.
+Counter state is kept so a recurring pattern can also trigger the
+skill-distiller promotion rule (three repeats = candidate workflow).
 """
 from __future__ import annotations
 
@@ -54,6 +55,9 @@ def detect(prompt: str) -> list[str]:
 
 
 def bump_counter(cue_key: str) -> int:
+    # Persisting between turns is what makes the "3 repeats" promotion
+    # rule possible. In-memory counters reset every session and would
+    # never reach the threshold.
     COUNTER_FILE.parent.mkdir(parents=True, exist_ok=True)
     try:
         data = json.loads(COUNTER_FILE.read_text(encoding="utf-8"))
@@ -87,7 +91,7 @@ def main() -> None:
     )
     if count >= 3 and "correction" in cues:
         msg += (
-            " Pattern has repeated 3+ times — also consider `skill-distiller` "
+            " Pattern has repeated 3+ times, also consider `skill-distiller` "
             "to lift the underlying workflow into a skill."
         )
 
