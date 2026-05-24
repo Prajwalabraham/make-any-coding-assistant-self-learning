@@ -1,0 +1,44 @@
+---
+description: Use when the user gives feedback, states a preference, mentions external systems, or confirms a non-obvious approach. Captures the signal into .cursor/memory/ and mirrors the index into 10-memory-index.mdc.
+alwaysApply: false
+---
+
+# Auto-Memory (Cursor)
+
+## Overview
+
+Cursor's only durable injection point is the rules system. Memory files
+live at `.cursor/memory/` for human readability, but the index has to be
+mirrored into `10-memory-index.mdc` (an `alwaysApply: true` rule) so the
+agent actually loads it on every turn.
+
+## When to Use
+
+- Corrections, confirmations, preferences, or external references
+- Skip code conventions visible in the repo and one-off task state
+
+## Steps
+
+1. Classify the signal: user / feedback / project / reference.
+2. Grep `.cursor/memory/` for an existing file on the topic; update if
+   found.
+3. Write `.cursor/memory/<type>_<slug>.md` with frontmatter and a body
+   containing rule, **Why**, **How to apply**.
+4. Append one line to `.cursor/memory/MEMORY.md`.
+5. Append the same line to `.cursor/rules/10-memory-index.mdc`.
+6. Stay silent.
+
+## Pitfalls
+
+1. Writing to `.cursor/memory/` but forgetting to mirror into the rules
+   file. The agent won't see it on next session.
+2. Saving the fix instead of the rule.
+3. Skipping the **Why**.
+4. Caching the codebase.
+
+## Checklist
+
+- [ ] Per-fact file at `.cursor/memory/<type>_<slug>.md`
+- [ ] One line appended to `MEMORY.md`
+- [ ] Same line appended to `.cursor/rules/10-memory-index.mdc`
+- [ ] No duplicate of an existing entry

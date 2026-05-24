@@ -1,0 +1,8 @@
+# Aider config. The `read` list is what Aider loads into context on
+# every session. CONVENTIONS.md carries the self-learning protocol;
+# MEMORY.md carries the index of learned facts. Per-fact memory files
+# are pulled in by the agent on demand via /read inside the session.
+
+read:
+  - CONVENTIONS.md
+  - .aider/memory/MEMORY.md

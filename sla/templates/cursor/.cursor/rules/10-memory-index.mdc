@@ -1,0 +1,8 @@
+---
+description: Memory index. Mirror of .cursor/memory/MEMORY.md so the rules system loads it on every turn.
+alwaysApply: true
+---
+
+# Memory Index
+
+<!-- no memories yet, agent will append here as it learns -->

@@ -1,0 +1,42 @@
+---
+description: Use when the user has issued the same multi-step instruction three or more times. Distills the workflow into a new rule under .cursor/rules/skills/.
+alwaysApply: false
+---
+
+# Skill Distiller (Cursor)
+
+## Overview
+
+Memory captures facts. Skills capture workflows. In Cursor, skills are
+rules with `alwaysApply: false` so the agent pulls them in by description
+match.
+
+## When to Use
+
+- A multi-step instruction has appeared in three separate sessions
+- User asks "can you remember how I like to do X?"
+
+## Steps
+
+1. Survey peer rules in `.cursor/rules/skills/`.
+2. Pick a verb-led slug.
+3. Write `.cursor/rules/skills/<slug>.mdc` with:
+   - `description:` starting with "Use when..." (this IS the trigger)
+   - `alwaysApply: false`
+   - Body with Overview / When to Use / Steps / Pitfalls / Checklist
+4. Show the draft to the user before committing.
+
+## Pitfalls
+
+1. Distilling on the second occurrence.
+2. `alwaysApply: true` on skills. Reserve `alwaysApply: true` for the
+   persona, the protocol, and the memory index. Skills load on demand.
+3. Descriptions that don't start with "Use when...". Cursor matches on
+   the first sentence of the description.
+
+## Checklist
+
+- [ ] Trigger appeared three or more times
+- [ ] `description` starts with "Use when"
+- [ ] `alwaysApply: false`
+- [ ] Body has all five sections

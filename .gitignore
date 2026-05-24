@@ -1,5 +1,22 @@
-.claude/memory/.signal_counter.json
-.claude/memory/archive/
+# Working .claude/ is the maintainer's own learned state for this repo.
+# The distributable template lives at sla/templates/claude-code/.claude/
+# and is the only one that ships to users.
+/.claude/
+
+# Same idea for any other agent configs at root if the maintainer
+# happens to be dogfooding via Codex / Cursor / Aider against this repo.
+/.agents/
+/.cursor/
+/.aider/
+/.aider.conf.yml
+/CONVENTIONS.md
+/AGENTS.md
+
+# Runtime artifacts emitted by the installed hooks
+**/.signal_counter.json
+**/memory/archive/
+
+# Local cache
 __pycache__/
 *.pyc
 .DS_Store

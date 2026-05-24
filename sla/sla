@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+# sla: the self-learning-agent CLI.
+#
+# Designed to be downloaded by `install.sh` and dropped on PATH. The
+# template tree lives at $HERE/templates/<agent>/... and is copied
+# wholesale into the chosen scope. No symlinks, no submodules: each
+# project owns its own learned state and cross-repo contamination is
+# avoided by construction.
+
+set -euo pipefail
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+TEMPLATE_ROOT="$HERE/templates"
+
+say()  { printf '  \033[1;36m%s\033[0m %s\n' "$1" "$2"; }
+ok()   { printf '  \033[1;32m✓\033[0m %s\n' "$1"; }
+warn() { printf '  \033[1;33m!\033[0m %s\n' "$1"; }
+fail() { printf '  \033[1;31merror\033[0m %s\n' "$1" >&2; exit 1; }
+
+ask_choice() {
+  # $1 = prompt, $@ = options. Reads from /dev/tty so it works under
+  # `curl | bash`, where stdin is the script body.
+  local prompt="$1"; shift
+  local -a opts=("$@")
+  local i
+  printf '\n  %s\n' "$prompt" >&2
+  for i in "${!opts[@]}"; do
+    printf '    %d) %s\n' "$((i+1))" "${opts[$i]}" >&2
+  done
+  local choice
+  while true; do
+    printf '  > ' >&2
+    read -r choice </dev/tty || fail "no tty available for interactive prompt"
+    if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >= 1 && choice <= ${#opts[@]} )); then
+      printf '%s\n' "${opts[$((choice-1))]}"
+      return 0
+    fi
+    warn "invalid choice, try again"
+  done
+}
+
+ask_yes_no() {
+  local prompt="$1" default="${2:-n}"
+  local hint="[y/N]"; [[ "$default" == "y" ]] && hint="[Y/n]"
+  printf '\n  %s %s ' "$prompt" "$hint" >&2
+  local ans
+  read -r ans </dev/tty || ans=""
+  ans="${ans:-$default}"
+  [[ "$ans" =~ ^[Yy]$ ]]
+}
+
+resolve_target() {
+  # $1 = agent slug. Echoes the absolute target directory based on scope.
+  local agent="$1"
+  local scope
+  scope="$(ask_choice "Install scope?" "this project (cwd)" "global (your home config)")"
+  case "$agent:$scope" in
+    "claude-code:this project (cwd)") echo "$PWD" ;;
+    "claude-code:global (your home config)") echo "$HOME/.claude" ;;
+    "codex:this project (cwd)")        echo "$PWD" ;;
+    "codex:global (your home config)") echo "$HOME/.codex" ;;
+    "cursor:this project (cwd)")       echo "$PWD" ;;
+    "cursor:global (your home config)") echo "$HOME/.cursor" ;;
+    "aider:this project (cwd)")        echo "$PWD" ;;
+    "aider:global (your home config)") echo "$HOME" ;;
+    *) fail "unknown agent/scope combo: $agent / $scope" ;;
+  esac
+}
+
+copy_template() {
+  # $1 = source dir under templates/, $2 = target dir. Refuses to
+  # overwrite without explicit consent so we never clobber a user's
+  # existing config silently.
+  local src="$1" dst="$2"
+  [[ -d "$src" ]] || fail "template directory missing: $src"
+  mkdir -p "$dst"
+
+  # Walk source files (including dotfiles), prompt on collision.
+  local rel
+  while IFS= read -r -d '' file; do
+    rel="${file#$src/}"
+    local target="$dst/$rel"
+    if [[ -e "$target" ]]; then
+      warn "exists: $target"
+      if ! ask_yes_no "  overwrite?"; then
+        say "skip" "$rel"
+        continue
+      fi
+    fi
+    mkdir -p "$(dirname "$target")"
+    cp "$file" "$target"
+    ok "wrote $rel"
+  done < <(find "$src" -type f -print0)
+}
+
+cmd_init() {
+  printf '\n  \033[1;35msla init\033[0m  self-learning scaffold for coding agents\n'
+
+  local agent_label agent target
+  agent_label="$(ask_choice "Which coding agent?" \
+    "Claude Code" "Codex CLI" "Cursor" "Aider")"
+  case "$agent_label" in
+    "Claude Code") agent="claude-code" ;;
+    "Codex CLI")   agent="codex" ;;
+    "Cursor")      agent="cursor" ;;
+    "Aider")       agent="aider" ;;
+  esac
+
+  target="$(resolve_target "$agent")"
+  say "==>" "installing $agent into $target"
+
+  if ! ask_yes_no "Proceed?" "y"; then
+    fail "aborted by user"
+  fi
+
+  copy_template "$TEMPLATE_ROOT/$agent" "$target"
+
+  printf '\n  \033[1;32m✓\033[0m self-learning agent installed.\n\n'
+  case "$agent" in
+    claude-code)
+      echo "  next: open the project in Claude Code. The SessionStart hook"
+      echo "        bootstraps the agent on first turn. Schedule the keeper"
+      echo "        with: /schedule create memory-keeper-weekly '0 9 * * 1'"
+      ;;
+    codex)
+      echo "  next: run 'codex' in the project. AGENTS.md is auto-loaded."
+      echo "        Wire the keeper to OS cron (see AGENTS.md)."
+      ;;
+    cursor)
+      echo "  next: open the project in Cursor. .cursor/rules/*.mdc are"
+      echo "        auto-applied. Schedule the keeper via Cursor Background"
+      echo "        Agents (weekly, 0 9 * * 1)."
+      ;;
+    aider)
+      echo "  next: cd into the project and run 'aider'. CONVENTIONS.md and"
+      echo "        the memory index auto-load via .aider.conf.yml. Wire"
+      echo "        the keeper to cron (see CONVENTIONS.md)."
+      ;;
+  esac
+  echo
+}
+
+cmd_list() {
+  echo "available templates:"
+  for d in "$TEMPLATE_ROOT"/*/; do
+    echo "  - $(basename "$d")"
+  done
+}
+
+cmd_help() {
+  cat <<EOF
+sla: self-learning-agent scaffolder
+
+usage:
+  sla init      interactive: pick agent, pick scope, drop the scaffold
+  sla list      show available agent templates
+  sla help      this message
+EOF
+}
+
+main() {
+  local sub="${1:-init}"; shift || true
+  case "$sub" in
+    init) cmd_init "$@" ;;
+    list) cmd_list ;;
+    help|-h|--help) cmd_help ;;
+    *) fail "unknown subcommand: $sub (try 'sla help')" ;;
+  esac
+}
+
+main "$@"
