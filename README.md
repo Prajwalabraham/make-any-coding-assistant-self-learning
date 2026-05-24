@@ -24,17 +24,17 @@ There's a third option. Make the agent *learn* instead of *read*.
 
 ---
 
-## Why this exists (and why not just use Hermes or OpenCode)
+## Why this exists (and why not just use Hermes, OpenClaw, or OpenCode)
 
-The honest version: agents like Hermes and OpenCode already have excellent self-learning architectures. Persona files, memory stores, skill libraries, hooks, the works. If you're starting fresh, just install Hermes and move on.
+The honest version: frameworks like [Hermes](https://hermes.dev), [OpenClaw](https://openclaw.ai/), and [OpenCode](https://github.com/sst/opencode) already have excellent self-learning architectures. Persona files, memory stores, skill libraries, hooks, the works. If you're starting fresh, install one of those and move on.
 
 The catch is that almost nobody reading this is starting fresh.
 
-If you've spent the last six months getting productive in Claude Code (or Cursor, or Codex), switching to a from-scratch framework is a tax most devs won't pay. You'd be giving up the IDE integration you actually use. You'd be re-learning a new TUI, a new keybinding set, a new failure-mode catalogue. You'd be standing up the environment from zero, authoring every skill and agent before any of it is useful, and accepting that those frameworks are research-grade tools first and developer-grade tools second.
+If you've spent the last six months getting productive in Claude Code (or Cursor, or Codex), switching is a tax most devs won't pay. You'd be giving up the IDE integration you actually use. You'd be re-learning a new TUI, a new keybinding set, a new failure-mode catalogue. You'd be standing up the environment from zero, authoring every skill and agent before any of it is useful. And whether the alternative is a general-purpose personal assistant (Hermes, OpenClaw) or a from-scratch OSS coding agent (OpenCode), the same problem applies: they're built for the developer who picks their tool today, not the one who picked it last year and has muscle memory in it now.
 
 So most devs don't migrate. They stay in their current agent, keep re-typing the same instructions every session, and the self-learning idea stays a curiosity rather than something they actually get to use.
 
-This repo is the wedge. **It takes the architectural ideas from Hermes (persona, memory, skills, scheduled cleanup) and ports them as a plug-and-play scaffold into the agents devs already use.** No migration. No new UI. No abandoning your existing setup. One curl-bash, pick your agent, keep working. The architecture is what matters; the tool you run it in shouldn't have to change.
+This repo is the wedge. **It takes the architectural ideas from Hermes and its cousins (persona, memory, skills, scheduled cleanup) and ports them as a plug-and-play scaffold into the agents devs already use.** No migration. No new UI. No abandoning your existing setup. One curl-bash, pick your agent, keep working. The architecture is what matters; the tool you run it in shouldn't have to change.
 
 ---
 
