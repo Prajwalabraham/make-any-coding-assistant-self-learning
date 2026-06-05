@@ -6,7 +6,8 @@
       "Write(./.claude/memory/**)",
       "Write(./.claude/skills/**)",
       "Edit(./.claude/memory/**)",
-      "Edit(./.claude/SOUL.md)"
+      "Edit(./.claude/SOUL.md)",
+      "Bash(python .claude/skills/memory-init/scripts/extract_candidates.py:*)"
     ]
   },
   "hooks": {
