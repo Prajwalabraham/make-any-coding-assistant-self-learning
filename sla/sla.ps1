@@ -80,6 +80,31 @@ function Copy-Template($Src, $Dst) {
     }
 }
 
+function Set-PythonInterpreter($Dst) {
+    # The Claude Code hooks and the memory-init skill invoke Python 3. The
+    # template ships `python3`, but on Windows that name is often absent
+    # (python.org installs expose `python` and the `py` launcher). Pick the
+    # interpreter that actually exists and rewrite the copied files so the
+    # hooks don't fail with "python3: command not found".
+    $interp = $null
+    foreach ($cand in @('python', 'py', 'python3')) {
+        if (Get-Command $cand -ErrorAction SilentlyContinue) { $interp = $cand; break }
+    }
+    if (-not $interp) { Warn 'no Python interpreter on PATH; hooks need Python 3.'; return }
+    if ($interp -eq 'python3') { return }
+    $files = @(
+        (Join-Path $Dst '.claude\settings.json'),
+        (Join-Path $Dst '.claude\skills\memory-init\SKILL.md')
+    )
+    foreach ($f in $files) {
+        if (Test-Path -LiteralPath $f) {
+            $content = (Get-Content -LiteralPath $f -Raw) -replace 'python3 ', "$interp "
+            Set-Content -LiteralPath $f -Value $content -NoNewline
+        }
+    }
+    Ok "wired Python hooks to '$interp' (python3 not found)"
+}
+
 function Cmd-Init {
     Write-Host "`n  sla init  self-learning scaffold for coding agents" -ForegroundColor Magenta
 
@@ -97,6 +122,7 @@ function Cmd-Init {
     if (-not (Ask-YesNo 'Proceed?' 'y')) { Fail 'aborted by user' }
 
     Copy-Template (Join-Path $TemplateRoot $agent) $target
+    if ($agent -eq 'claude-code') { Set-PythonInterpreter $target }
 
     Write-Host "`n  + self-learning agent installed.`n" -ForegroundColor Green
     switch ($agent) {

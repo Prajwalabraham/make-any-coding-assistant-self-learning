@@ -7,7 +7,7 @@
       "Write(./.claude/skills/**)",
       "Edit(./.claude/memory/**)",
       "Edit(./.claude/SOUL.md)",
-      "Bash(python .claude/skills/memory-init/scripts/extract_candidates.py:*)"
+      "Bash(python3 .claude/skills/memory-init/scripts/extract_candidates.py:*)"
     ]
   },
   "hooks": {
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/session_start.py"
+            "command": "python3 .claude/hooks/session_start.py"
           }
         ]
       }
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/capture_signal.py"
+            "command": "python3 .claude/hooks/capture_signal.py"
           }
         ]
       }

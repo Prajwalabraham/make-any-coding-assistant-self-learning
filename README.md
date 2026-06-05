@@ -203,10 +203,10 @@ The agents that ship real hook systems get this for free. Claude Code has `Sessi
 {
   "hooks": {
     "SessionStart": [{ "matcher": "*", "hooks": [
-      { "type": "command", "command": "python .claude/hooks/session_start.py" }
+      { "type": "command", "command": "python3 .claude/hooks/session_start.py" }
     ]}],
     "UserPromptSubmit": [{ "matcher": "*", "hooks": [
-      { "type": "command", "command": "python .claude/hooks/capture_signal.py" }
+      { "type": "command", "command": "python3 .claude/hooks/capture_signal.py" }
     ]}]
   }
 }
