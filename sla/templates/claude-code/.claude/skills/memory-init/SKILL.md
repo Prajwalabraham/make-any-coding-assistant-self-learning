@@ -50,7 +50,7 @@ after you approve the proposed list. Re-running is safe and incremental.
    so already-processed sessions are skipped:
 
    ```bash
-   python .claude/skills/memory-init/scripts/extract_candidates.py \
+   python3 .claude/skills/memory-init/scripts/extract_candidates.py \
      --scope <local|global> \
      --project-root "<absolute path to this project>" \
      --manifest .claude/memory/.init_manifest.json
